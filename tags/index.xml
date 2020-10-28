@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on Bazil</title>
+    <link>https://bazil.org/tags/</link>
+    <description>Recent content in Tags on Bazil</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Tue, 07 Jul 2015 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://bazil.org/tags/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>bazil</title>
+      <link>https://bazil.org/tags/bazil/</link>
+      <pubDate>Tue, 07 Jul 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://bazil.org/tags/bazil/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>announce</title>
+      <link>https://bazil.org/tags/announce/</link>
+      <pubDate>Thu, 24 Apr 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://bazil.org/tags/announce/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>project</title>
+      <link>https://bazil.org/tags/project/</link>
+      <pubDate>Thu, 24 Apr 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://bazil.org/tags/project/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>fuse</title>
+      <link>https://bazil.org/tags/fuse/</link>
+      <pubDate>Mon, 10 Jun 2013 00:00:00 +0000</pubDate>
+      
+      <guid>https://bazil.org/tags/fuse/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>talk</title>
+      <link>https://bazil.org/tags/talk/</link>
+      <pubDate>Mon, 10 Jun 2013 00:00:00 +0000</pubDate>
+      
+      <guid>https://bazil.org/tags/talk/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

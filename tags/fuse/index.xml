@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>fuse on Bazil</title>
+    <link>https://bazil.org/tags/fuse/</link>
+    <description>Recent content in fuse on Bazil</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Mon, 10 Jun 2013 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://bazil.org/tags/fuse/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>FUSE talk slides available</title>
+      <link>https://bazil.org/2013/06/10/talk-about-fuse/</link>
+      <pubDate>Mon, 10 Jun 2013 00:00:00 +0000</pubDate>
+      
+      <guid>https://bazil.org/2013/06/10/talk-about-fuse/</guid>
+      <description>Tv is talking about the Bazil FUSE library at the local Gopher meetup tonight. Check out the slides.</description>
+    </item>
+    
+    <item>
+      <title>Hello, World!</title>
+      <link>https://bazil.org/2013/04/01/not-a-fool/</link>
+      <pubDate>Mon, 01 Apr 2013 00:00:00 +0000</pubDate>
+      
+      <guid>https://bazil.org/2013/04/01/not-a-fool/</guid>
+      <description>Hi. This blog post establishes the Bazil.org project. This is not an April Fool&#39;s joke.
+There are more ambituous things floating in the background, but many people have expressed interest in this, so here&#39;s an early release: a Go FUSE filesystem programming library.
+This is based on Russ Cox&amp;lsquo;s fuse library, as hosted at https://code.google.com/p/rsc/source/browse/#hg%2Ffuse
+Here&#39;s how to get going:
+go get bazil.org/fuse  The github repository is at https://github.com/bazil/fuse</description>
+    </item>
+    
+  </channel>
+</rss>

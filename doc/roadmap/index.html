@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Bazil</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Filesystem hacking in Go">
+<meta name="go-import" content="bazil.org/bazil git https://github.com/bazil/bazil">
+<meta name="go-import" content="bazil.org/fuse git https://github.com/bazil/fuse">
+<meta name="go-import" content="bazil.org/bolt-mount git https://github.com/bazil/bolt-mount">
+<meta name="go-import" content="bazil.org/zipfs git https://github.com/bazil/zipfs">
+<meta name="go-import" content="bazil.org/plop git https://github.com/bazil/plop">
+<link rel="canonical" href="https://bazil.org/doc/roadmap/">
+<link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<link href="/css/bazil.css" rel="stylesheet" media="screen">
+<link rel="icon" type="image/svg+xml" href="/img/logo.svg"/>
+<link rel="icon" type="image/png" href="/img/logo.512x512.png"/>
+</head>
+  <body><nav class="navbar navbar-expand navbar-dark bg-black" role="navigation">
+	<a class="navbar-brand" href="/">Bazil<img src="/img/logo-white.svg" style="height: 24px; margin-left: 10px; vertical-align: top;"/></a>
+  <ul class="navbar-nav mr-auto">
+    
+	  
+	  <li class="nav-item "><a class="nav-link" href="/doc/">documentation</a></li>
+	  
+	  <li class="nav-item "><a class="nav-link" href="/fuse/">fuse</a></li>
+	  
+	  <li class="nav-item "><a class="nav-link" href="/talks/">talks</a></li>
+	  
+  </ul>
+  </div>
+</nav>
+<div class="container-xl bazil-top-container">
+      <div class="row">
+	      <div class="col-md-2">
+	        
+          
+	        
+	        <div class="list-group bazil-toc">
+	          
+		        <a class="list-group-item list-group-item-action " href="/doc/">Introduction</a>
+	          
+		        <a class="list-group-item list-group-item-action " href="/doc/status/">Status</a>
+	          
+		        <a class="list-group-item list-group-item-action " href="/doc/install/">Installation</a>
+	          
+		        <a class="list-group-item list-group-item-action " href="/doc/usage/">Usage</a>
+	          
+		        <a class="list-group-item list-group-item-action " href="/doc/architecture/">Architecture</a>
+	          
+		        <a class="list-group-item list-group-item-action " href="/doc/antigoals/">Anti-goals</a>
+	          
+		        <a class="list-group-item list-group-item-action active" href="/doc/roadmap/">Roadmap</a>
+	          
+		        <a class="list-group-item list-group-item-action " href="/doc/related/">Related work</a>
+	          
+	        </div>
+	        
+	      </div>
+	      <div class="col-md-6">
+<h1>Roadmap</h1>
+<div><p>This document serves as a big-picture roadmap of where Bazil is
+headed. This is all speculative and may change at any time.</p>
+<hr>
+<h2 id="near">Near future</h2>
+<h3 id="sync">Synchronize file changes between peers</h3>
+<p>Work in progress, slowed by lacking RPC infrastructure.</p>
+<h3 id="kvmulti">Concurrent multi-backend KV storage</h3>
+<p>Current version is sequential and naive.</p>
+<p>Introduce concept of cancel/interrupt to CAS and KV APIs: <code>cancel &lt;-chan struct{}</code>, tie into <code>fuse.Intr</code> when serving FS request.</p>
+<p>Bandwidth/latency estimation to prioritize backend attempts. Staggered
+time delays before starting too many concurrent requests, but move
+forward faster if too few requests in flight.</p>
+<p>Circuit breaker for better behavior under faults.</p>
+<h3 id="sftp">Remote KV store access over SFTP</h3>
+<h3 id="kvshuffle">Shuffle data in/out of KV stores interactively</h3>
+<p>Sketch: <code>bazil get PATH</code>, <code>bazil push PATH KVSTORE</code></p>
+<h3 id="synckv">Synchronize KV stores on the background</h3>
+<h3 id="reflink">Support reflink for instant file copies</h3>
+<hr>
+<h2 id="far">Further out</h2>
+<h3 id="pin">Pin file content</h3>
+<p>Persistently remember and respect pins, strive to keep pinned data on
+local disk.</p>
+<p>Sketch: <code>bazil pin PATH</code>, <code>bazil unpin PATH</code></p>
+<h3 id="arena">Arena storage for CAS objects</h3>
+<p>Once an arena is sealed, make an index with perfect hashing.</p>
+<p>Support object deletion by hole punching.</p>
+<h3 id="s3">Remote KV store access over S3</h3>
+<h3 id="review">Review crypto usage</h3>
+<p>Review convergencent encryption against ideas in
+<a href="https://github.com/cryptosphere/cryptosphere/wiki/Data-Model">Cryptosphere</a>.</p>
+<h3 id="gc">Garbage collection</h3>
+<p>Challenging because it's distributed garbage collection in a
+weakly-connected system.</p>
+<h3 id="tree-space">Recursive lazy accounting of subtree size etc</h3>
+<p>Make directory reflect the size, file counts, modification time etc
+possible aggregates of the whole subtree.</p>
+<p>Update lazily in the background.</p>
+<p>Report the non-standard aggregations via xattrs?</p>
+<p>See <a href="http://ceph.com/">Ceph</a> for ideas on the user experience.</p>
+<hr>
+<h2 id="bluesky">Blue Sky</h2>
+<p>These may never happen, but are still worth writing down.</p>
+<h3 id="remote-client">Remote client access through SFTP/CIFS/NFS</h3>
+</div>
+</div>
+	      <div class="col-md-1"></div>
+	      <div class="col-md-2"><h3>Projects</h3>
+
+<p>
+  <a href="/doc">Bazil</a> is a distributed file system designed
+  for single-person disconnected operation. It lets you share your
+  files across all your computers, with or without cloud services.
+</p>
+
+<p>
+  <a href="/fuse">FUSE</a> is a programming library for writing file
+  systems in userspace, in Go.
+</p>
+</div>
+	      <div class="col-md-1"></div>
+      </div>
+    </div>
+<script src="/js/jquery-3.4.1.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+
+<script>
+ (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+ })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ ga('create', 'UA-39802734-1', 'bazil.org');
+ ga('send', 'pageview');
+</script>
+</body>
+</html>

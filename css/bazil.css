@@ -1,0 +1,125 @@
+.bazil-top-container {
+  padding-left: 30px;
+  margin-top: 36px;
+  margin-bottom: 60px;
+}
+
+.bazil-toc {
+  margin-top: 60px;
+}
+
+.stealthlink {
+  color: #333;
+}
+
+a.list-group-item.active,
+a.list-group-item.active:hover,
+a.list-group-item.active:focus {
+  background-image: -webkit-linear-gradient(top, #fafafa 0%, #fafafa 100%);
+  background-image: linear-gradient(to bottom, #fafafa 0%, #fafafa 100%);
+  background-color: #fafafa;
+  color: #808080;
+  border-color: #424242;
+}
+
+.blog-index-entry h1 {
+    display: inline-flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.hdr-date {
+    /* align with tbe bottom of the h1, not the top */
+    margin-top: auto;
+    margin-bottom: 0;
+    /* don't word-wrap around the dashes in a date */
+    white-space: nowrap;
+}
+
+/* bootstrap leaves <hr>'s almost invisible */
+hr.strong {
+  margin: 30px;
+  border-top: 1px solid #ccc;
+}
+
+pre code {
+    display: block;
+    padding: 9.5px;
+    color: #333;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+body {
+    color: #333333;
+}
+
+a {
+    color: #428bca;
+}
+
+code {
+    color: #c7254e;
+}
+
+.bg-black {
+    background-color: #000000;
+}
+
+.navbar-dark .navbar-brand {
+    color: #aaa;
+    /* align logo left dot nicely near bottom of text */
+    line-height: 1.25rem;
+}
+
+.emphasize-border-left {
+    padding: 10px 20px;
+    border-left: 5px solid #eee;
+}
+
+
+body {
+    /* bootstrap doesn't give a crap about good linux defaults
+       https://getbootstrap.com/docs/4.4/content/reboot/#native-font-stack
+   */
+    font-family:
+	/* what looks good on Linux, IMHO */
+	"Liberation Sans",
+	/* Safari for macOS and iOS (San Francisco) */
+	-apple-system,
+	/* Chrome < 56 for macOS (San Francisco) */
+	BlinkMacSystemFont,
+	/* Windows */
+	"Segoe UI",
+	/* Android */
+	"Roboto",
+	/* Basic web fallback */
+	"Helvetica Neue", Arial, sans-serif,
+	/* Emoji fonts */
+	"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+/* https://blog.prototypr.io/align-svg-icons-to-text-and-say-goodbye-to-font-icons-d44b3d7b26b4 */
+.svg-icon {
+  display: inline-flex;
+  align-self: center;
+}
+.svg-icon svg {
+  height:1em;
+  width:1em;
+}
+.svg-icon.svg-baseline svg {
+  top: .125em;
+  position: relative;
+}
+
+.svg-icon.text-success {
+    fill: var(--success);
+}
+.svg-icon.text-danger {
+    fill: var(--danger);
+}
+.svg-icon.text-warning {
+    fill: var(--warning);
+}

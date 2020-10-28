@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Bazil</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Filesystem hacking in Go">
+<meta name="go-import" content="bazil.org/bazil git https://github.com/bazil/bazil">
+<meta name="go-import" content="bazil.org/fuse git https://github.com/bazil/fuse">
+<meta name="go-import" content="bazil.org/bolt-mount git https://github.com/bazil/bolt-mount">
+<meta name="go-import" content="bazil.org/zipfs git https://github.com/bazil/zipfs">
+<meta name="go-import" content="bazil.org/plop git https://github.com/bazil/plop">
+<link rel="canonical" href="https://bazil.org/2015/07/07/distributed/">
+<link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<link href="/css/bazil.css" rel="stylesheet" media="screen">
+<link rel="icon" type="image/svg+xml" href="/img/logo.svg"/>
+<link rel="icon" type="image/png" href="/img/logo.512x512.png"/>
+</head>
+  <body><nav class="navbar navbar-expand navbar-dark bg-black" role="navigation">
+	<a class="navbar-brand" href="/">Bazil<img src="/img/logo-white.svg" style="height: 24px; margin-left: 10px; vertical-align: top;"/></a>
+  <ul class="navbar-nav mr-auto">
+    
+	  
+	  <li class="nav-item "><a class="nav-link" href="/doc/">documentation</a></li>
+	  
+	  <li class="nav-item "><a class="nav-link" href="/fuse/">fuse</a></li>
+	  
+	  <li class="nav-item "><a class="nav-link" href="/talks/">talks</a></li>
+	  
+  </ul>
+  </div>
+</nav>
+<div class="container-xl bazil-top-container">
+      <div class="row">
+	      <div class="col-md-2">
+	        
+          
+	        
+	      </div>
+	      <div class="col-md-6">
+<h1>Status update: a <em>distributed</em> filesystem</h1>
+<div><p>A lot of time has passed, and a lot of code has been written. Bazil is
+still in heavy development, but it has reached a good milestone to
+blog about: it can synchronize changes from one peer to another.</p>
+<p>Warning: at this stage in development, we will put no effort into
+compatibility of file formats or protocols. Do not stare into laser
+with remaining eye.</p>
+<p>What follows is a walkthrough of scenario where we have two computers
+sharing files &ndash; find me at <a href="http://www.gophercon.com/">GopherCon</a> for
+a live demo, or follow the steps and run it yourself.</p>
+<h2 id="installation">Installation</h2>
+<p>First, make sure you have a working <a href="http://golang.org/">Go</a> (&gt;=1.4)
+installation. You are expected to have basic familiarity with Go, at
+this point in development.</p>
+<p>Unfortunately, to work around a
+<a href="https://github.com/grpc/grpc-go/issues/111">missing gRPC feature</a>, we
+need a custom branch of it for now. Let's check that out:</p>
+<pre><code class="language-console" data-lang="console">$ go get google.golang.org/grpc
+$ cd $GOPATH/src/google.golang.org/grpc
+$ git remote add bazil https://github.com/bazil/grpc-go
+$ git fetch bazil
+$ git checkout -b auth bazil/auth
+</code></pre><p>And then install Bazil itself:</p>
+<pre><code class="language-console" data-lang="console">$ go get bazil.org/bazil
+</code></pre><h2 id="initialization">Initialization</h2>
+<p>For the rest, we'll assume you have two computers, virtual machines or
+containers that will talk to each other.</p>
+<p>You can also run the steps on one host, by calling passing the <code>bazil -data-dir=PATH</code> option as appropriate to keep two separate state
+directories.</p>
+<p>We'll call our two environments <code>black</code> and <code>white</code>, and differentiate
+them with that hostname in the prompt.</p>
+<pre><code class="language-console" data-lang="console">white$ bazil create
+</code></pre><pre><code class="language-console" data-lang="console">black$ bazil create
+</code></pre><h2 id="public-keys">Public keys</h2>
+<p>To introduce the peers to each other, we need to pass their public
+keys to each other. As the current code doesn't actually keep track of
+any nicknames or aliases for peers, we'll need to refer to these
+public keys a lot. Let's set shell variables to remember them.</p>
+<p>To see the public key of a node, run</p>
+<pre><code class="language-console" data-lang="console">white$ bazil debug pubkey
+</code></pre><p>Typically, debug commands access the database directly, and will only
+work if the server is not running.</p>
+<p>Now set the variable <code>$BLACK</code> on the host <code>white</code> with the value being
+the public key of <code>black</code>, and vice versa. If you're running the two
+on the same host, the following will work; if not, copy-pasting with
+the mouse is needed.</p>
+<pre><code class="language-console" data-lang="console">white$ BLACK=&quot;$(bazil -data-dir=path/to/datadir/of/black debug pubkey)&quot;
+</code></pre><pre><code class="language-console" data-lang="console">black$ WHITE=&quot;$(bazil -data-dir=path/to/datadir/of/white debug pubkey)&quot;
+</code></pre><p>As is probably obvious from the <code>debug</code> in the command name, this is
+not the final UX for this.</p>
+<h2 id="running-the-server">Running the server</h2>
+<p>Bazil has a (per-user) server component that the command-line
+utilities communicate with. Let's start the server on <code>white</code>.</p>
+<pre><code class="language-console" data-lang="console">white$ bazil server run &amp;
+bazil: Listening on [::]:34211
+</code></pre><pre><code class="language-console" data-lang="console">black$ bazil server run &amp;
+bazil: Listening on [::]:nnnnn
+</code></pre><h2 id="making-friends">Making friends</h2>
+<p>We believe in the value of encryption. Bazil uses
+<a href="https://bazil.org/doc/architecture/">convergent encryption</a> with
+<em>sharing keys</em> where the people who know the relevant sharing key can
+have access to the data.</p>
+<p>The default installation sets up one sharing key, but let's make a new
+one for our shared files; it's just 32 bytes of random data. We'll
+name our new sharing key <code>friends</code>.</p>
+<pre><code class="language-console" data-lang="console">white$ dd if=/dev/urandom of=sekrit bs=32 count=1
+white$ bazil sharing add friends &lt;sekrit
+</code></pre><p>Let's create a volume using the new sharing key, and mount it.</p>
+<pre><code class="language-console" data-lang="console">white$ bazil volume create -sharing=friends myfiles
+white$ mkdir mnt
+white$ bazil volume mount myfiles mnt
+</code></pre><p>We now have an encrypted, deduplicating, snapshottable, <em>local</em> file
+system. Let's share it with <code>black</code>, using the public key stored in
+<code>$BLACK</code> from earlier.</p>
+<p>We introduce a new peer, identified by the public key stored in
+<code>$BLACK</code>. We tell <code>white</code> to allow <code>black</code> to access its local
+<a href="https://bazil.org/doc/architecture/">content-addressed storage</a>, and
+the <code>myfiles</code> volume we just created.</p>
+<pre><code class="language-console" data-lang="console">white$ bazil peer add $BLACK
+white$ bazil peer storage allow $BLACK local
+white$ bazil peer volume allow $BLACK myfiles
+</code></pre><p>Let's tell <code>black</code> to use the new volume. First, we introduce the
+<code>white</code> as a new peer for <code>black</code>, and giving the network location
+where the server on <code>white</code> is listening on. The server prefers the
+port 34211 (<em>bazil</em>, do you see it?), but will use any free port. We
+saw the port output earlier.</p>
+<pre><code class="language-console" data-lang="console">black$ bazil peer add $WHITE
+black$ bazil peer location set $WHITE 192.0.2.42:34211
+</code></pre><p>Later, we'll introduce more rendezvous mechanisms, including multicast
+DNS and an internet-wide lookup based on the public key, and
+mechanisms for working behind NATs.</p>
+<p><code>black</code> needs to know the sharing key from earlier. Copy the <code>sekrit</code>
+file from <code>white</code> to <code>black</code> through whatever means are appropriate,
+and then run</p>
+<pre><code class="language-console" data-lang="console">black$ bazil sharing add friends &lt;sekrit
+black$ bazil volume connect -sharing=friends $WHITE myfiles
+black$ bazil volume storage add -sharing=friends myfiles peerkey:$WHITE
+black$ mkdir mnt
+black$ bazil volume mount myfiles mnt
+</code></pre><p>We now have the save volume mounted on two machines.</p>
+<h2 id="a-distributed-filesystem">A <em>distributed</em> filesystem</h2>
+<p>Let's make changes on <code>white</code> and observe them on <code>black</code>.</p>
+<pre><code class="language-console" data-lang="console">white$ echo hello, world &gt;mnt/greeting
+</code></pre><pre><code class="language-console" data-lang="console">black$ bazil volume sync myfiles $WHITE
+black$ ls mnt
+black$ cat mnt/greeting
+</code></pre><pre><code class="language-console" data-lang="console">white$ echo hello, again &gt;mnt/greeting
+</code></pre><pre><code class="language-console" data-lang="console">black$ bazil volume sync myfiles $WHITE
+black$ cat mnt/greeting
+</code></pre><p>Hey! It works!</p>
+<h2 id="limitations">Limitations</h2>
+<p>The sync implementation doesn't currently handle deletions or
+subdirectories.</p>
+<p>There is currently no user interface to resolve conflicts, or to
+finish sync merges that were postponed because a file was still open.</p>
+<p>At this stage in development, we will put no effort into compatibility
+of file formats or protocols.</p>
+<h2 id="future">Future</h2>
+<p>After the obvious missing functionality mentioned is done, there's
+plenty of work to be done on making the user experience of managing
+peers better. The steps above are very manual and discrete right now,
+as that is what's easiest to debug.</p>
+<p>Once the common usage scenarios have been explored, more convenient
+mechanisms can be added on top of these low-level steps, e.g.
+bootstrapping a peer connection over ssh, and interacting with friends
+over im with humans copy-pasting short messages.</p>
+<p>To learn more about the <strong>why</strong> of Bazil, read the
+<a href="https://bazil.org/2014/04/24/introducing-bazil.html">introductory blog post</a>.</p>
+<p>To understand the architecture of Bazil better, browse the
+documentation <a href="https://bazil.org/doc/">https://bazil.org/doc/</a> .</p>
+<p>Bazil is still at an early stage in development, but the future looks
+really exciting. We'd love to have you participating.</p>
+</div>
+<p>
+  posted on
+  <a href="/2015/07/07/distributed/">2015-07-07</a>,
+  tagged as
+  
+  
+  <a href="https://bazil.org/tags/bazil/">bazil</a>
+  
+  
+</p>
+</div>
+	      <div class="col-md-1"></div>
+	      <div class="col-md-2"><h3>Projects</h3>
+
+<p>
+  <a href="/doc">Bazil</a> is a distributed file system designed
+  for single-person disconnected operation. It lets you share your
+  files across all your computers, with or without cloud services.
+</p>
+
+<p>
+  <a href="/fuse">FUSE</a> is a programming library for writing file
+  systems in userspace, in Go.
+</p>
+</div>
+	      <div class="col-md-1"></div>
+      </div>
+    </div>
+<script src="/js/jquery-3.4.1.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+
+<script>
+ (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+ })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ ga('create', 'UA-39802734-1', 'bazil.org');
+ ga('send', 'pageview');
+</script>
+</body>
+</html>

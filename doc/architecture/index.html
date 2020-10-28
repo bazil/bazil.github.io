@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Bazil</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Filesystem hacking in Go">
+<meta name="go-import" content="bazil.org/bazil git https://github.com/bazil/bazil">
+<meta name="go-import" content="bazil.org/fuse git https://github.com/bazil/fuse">
+<meta name="go-import" content="bazil.org/bolt-mount git https://github.com/bazil/bolt-mount">
+<meta name="go-import" content="bazil.org/zipfs git https://github.com/bazil/zipfs">
+<meta name="go-import" content="bazil.org/plop git https://github.com/bazil/plop">
+<link rel="canonical" href="https://bazil.org/doc/architecture/">
+<link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<link href="/css/bazil.css" rel="stylesheet" media="screen">
+<link rel="icon" type="image/svg+xml" href="/img/logo.svg"/>
+<link rel="icon" type="image/png" href="/img/logo.512x512.png"/>
+</head>
+  <body><nav class="navbar navbar-expand navbar-dark bg-black" role="navigation">
+	<a class="navbar-brand" href="/">Bazil<img src="/img/logo-white.svg" style="height: 24px; margin-left: 10px; vertical-align: top;"/></a>
+  <ul class="navbar-nav mr-auto">
+    
+	  
+	  <li class="nav-item "><a class="nav-link" href="/doc/">documentation</a></li>
+	  
+	  <li class="nav-item "><a class="nav-link" href="/fuse/">fuse</a></li>
+	  
+	  <li class="nav-item "><a class="nav-link" href="/talks/">talks</a></li>
+	  
+  </ul>
+  </div>
+</nav>
+<div class="container-xl bazil-top-container">
+      <div class="row">
+	      <div class="col-md-2">
+	        
+          
+	        
+	        <div class="list-group bazil-toc">
+	          
+		        <a class="list-group-item list-group-item-action " href="/doc/">Introduction</a>
+	          
+		        <a class="list-group-item list-group-item-action " href="/doc/status/">Status</a>
+	          
+		        <a class="list-group-item list-group-item-action " href="/doc/install/">Installation</a>
+	          
+		        <a class="list-group-item list-group-item-action " href="/doc/usage/">Usage</a>
+	          
+		        <a class="list-group-item list-group-item-action active" href="/doc/architecture/">Architecture</a>
+	          
+		        <a class="list-group-item list-group-item-action " href="/doc/antigoals/">Anti-goals</a>
+	          
+		        <a class="list-group-item list-group-item-action " href="/doc/roadmap/">Roadmap</a>
+	          
+		        <a class="list-group-item list-group-item-action " href="/doc/related/">Related work</a>
+	          
+	        </div>
+	        
+	      </div>
+	      <div class="col-md-6">
+<h1>Architecture</h1>
+<div><h2 id="filesystem">Filesystem</h2>
+<p>Bazil is a <a href="/doc/related#fuse">userspace</a> file system. This means the
+files you see when using Bazil do not have to actually exist as files
+on a local file system. This lets you do things like browse terabytes
+of archived data on a laptop with a small SSD.</p>
+<p>Your local disk will be used as the default storage location and a
+cache.</p>
+<h2 id="cas">Content-Addressed Storage</h2>
+<p>Each file stored in Bazil is divided into chunks,
+<a href="/doc/related#blake2">hashed</a> in a
+<a href="https://en.wikipedia.org/wiki/Merkle_tree">Merkle tree</a>, and stored
+into a Content-Addressed Store (CAS). Chunk sizes may vary across
+files, but each file uses just one chunk size; this is used for fast
+random access inside the file.</p>
+<p>Using a CAS means that storing the content more than once does not
+take up any extra space (if using the same chunk size). Using a Merkle
+tree means that small updates to the file only need to store the
+updated chunks.</p>
+<p>The Merkle tree also ensures data integrity. Knowing the hash at the
+root of the tree means none of the content below can have changed,
+maliciously or by bitrot.</p>
+<h2 id="crypto">Convergent encryption</h2>
+<p><a href="https://en.wikipedia.org/wiki/Convergent_encryption">Convergent encryption</a>
+means data is encrypted with a secret key derived from the data
+itself. Bazil uses an extra secret to limit the scope to people you
+wish to share and/or deduplicate data with.</p>
+<p>Each chunk stored in CAS is encrypted and authenticated with a
+<a href="/doc/related#nacl">NaCl</a> secretbox, with a configured secret and a
+nonce derived from a personalized <a href="/doc/related#blake2">Blake2</a> hash
+of the key (which is another personalized Blake2 hash of the content).
+The encrypted data is identified by a new key, which is again a
+personalized Blake2 hash of the old key, keyed by the configured
+secret.</p>
+<h2 id="directory">Directory storage</h2>
+<p>Trickling every single file content change as Merkle trees of
+directories all the way to the top of the root of the volume would be
+a lot of extra work. Instead, Bazil takes the hybrid approach:
+directories are stored in the CAS only when taking a
+<a href="/doc/architecture#snapshot">snapshot</a>; live data lives in a
+<a href="/doc/related#bolt">key-value database</a>.</p>
+<p>The directory contents are stored as <code>&lt;dir_inode&gt;&lt;basename&gt;</code> -&gt;
+<code>&lt;file_metadata&gt;</code>. This makes <code>readdir+stat</code> fast, while always
+serving directories in alphabetical order.</p>
+<p>There is currently no support for multiple directory entries pointing
+to the same inode, aka <a href="/doc/antigoals#limits-hardlink">hard links</a>.</p>
+<h2 id="snapshot">Snapshot</h2>
+<p>Taking a snapshot writes the directory contents from the
+<a href="/doc/architecture#directory">database</a> to the
+<a href="/doc/architecture#cas">CAS</a>, thereby archiving a snapshot of the
+state of the volume.</p>
+<p>Snapshots are created and accessed through the top-level <code>.snap</code>
+pseudo-directory. A new snapshot can be taken simply with <code>mkdir</code>.</p>
+<pre><code class="language-console" data-lang="console">$ echo Hello &gt;greeting
+$ mkdir .snap/remember-me
+$ rm greeting
+$ cat .snap/remember-me/greeting
+Hello
+</code></pre><p>The inode space is partitioned so that this and other dynamic content
+gets distinct inode numbers that never collide with allocated inodes.</p>
+</div>
+</div>
+	      <div class="col-md-1"></div>
+	      <div class="col-md-2"><h3>Projects</h3>
+
+<p>
+  <a href="/doc">Bazil</a> is a distributed file system designed
+  for single-person disconnected operation. It lets you share your
+  files across all your computers, with or without cloud services.
+</p>
+
+<p>
+  <a href="/fuse">FUSE</a> is a programming library for writing file
+  systems in userspace, in Go.
+</p>
+</div>
+	      <div class="col-md-1"></div>
+      </div>
+    </div>
+<script src="/js/jquery-3.4.1.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+
+<script>
+ (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+ })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ ga('create', 'UA-39802734-1', 'bazil.org');
+ ga('send', 'pageview');
+</script>
+</body>
+</html>

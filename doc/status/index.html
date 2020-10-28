@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Bazil</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Filesystem hacking in Go">
+<meta name="go-import" content="bazil.org/bazil git https://github.com/bazil/bazil">
+<meta name="go-import" content="bazil.org/fuse git https://github.com/bazil/fuse">
+<meta name="go-import" content="bazil.org/bolt-mount git https://github.com/bazil/bolt-mount">
+<meta name="go-import" content="bazil.org/zipfs git https://github.com/bazil/zipfs">
+<meta name="go-import" content="bazil.org/plop git https://github.com/bazil/plop">
+<link rel="canonical" href="https://bazil.org/doc/status/">
+<link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<link href="/css/bazil.css" rel="stylesheet" media="screen">
+<link rel="icon" type="image/svg+xml" href="/img/logo.svg"/>
+<link rel="icon" type="image/png" href="/img/logo.512x512.png"/>
+</head>
+  <body><nav class="navbar navbar-expand navbar-dark bg-black" role="navigation">
+	<a class="navbar-brand" href="/">Bazil<img src="/img/logo-white.svg" style="height: 24px; margin-left: 10px; vertical-align: top;"/></a>
+  <ul class="navbar-nav mr-auto">
+    
+	  
+	  <li class="nav-item "><a class="nav-link" href="/doc/">documentation</a></li>
+	  
+	  <li class="nav-item "><a class="nav-link" href="/fuse/">fuse</a></li>
+	  
+	  <li class="nav-item "><a class="nav-link" href="/talks/">talks</a></li>
+	  
+  </ul>
+  </div>
+</nav>
+<div class="container-xl bazil-top-container">
+      <div class="row">
+	      <div class="col-md-2">
+	        
+          
+	        
+	        <div class="list-group bazil-toc">
+	          
+		        <a class="list-group-item list-group-item-action " href="/doc/">Introduction</a>
+	          
+		        <a class="list-group-item list-group-item-action active" href="/doc/status/">Status</a>
+	          
+		        <a class="list-group-item list-group-item-action " href="/doc/install/">Installation</a>
+	          
+		        <a class="list-group-item list-group-item-action " href="/doc/usage/">Usage</a>
+	          
+		        <a class="list-group-item list-group-item-action " href="/doc/architecture/">Architecture</a>
+	          
+		        <a class="list-group-item list-group-item-action " href="/doc/antigoals/">Anti-goals</a>
+	          
+		        <a class="list-group-item list-group-item-action " href="/doc/roadmap/">Roadmap</a>
+	          
+		        <a class="list-group-item list-group-item-action " href="/doc/related/">Related work</a>
+	          
+	        </div>
+	        
+	      </div>
+	      <div class="col-md-6">
+<h1>Bazil is still in development</h1>
+<div><p>In early <strong>alpha</strong> testing.</p>
+<p>The data formats in Bazil are still undergoing major changes, and
+significant functionality is missing or has not been tested well
+enough.</p>
+<p>While we don't expect it to literally lose data, we will not put extra
+effort into data format compatibility until the first formally
+released version.</p>
+<p>As it is, Bazil is intended primarily for other developers and power
+users exploring future options. Do not stare into laser with remaining
+eye.</p>
+<p>The current version has not been tuned for performance and should not
+be taken as an indication of what will be possible later.</p>
+<p>Bazil is provided &ldquo;as is&rdquo; and with no warranty. See the file
+<a href="https://github.com/bazil/bazil/blob/master/LICENSE">LICENSE</a> in
+the source distribution for more.</p>
+<p>With all that said, we are very enthusiastic about the possible uses
+of Bazil, and think that the architecture can be very resilient
+against data loss.</p>
+<h2 id="limits">Limitations</h2>
+<p>Bazil is still missing features, and has intentional limits to keep it
+simple and focused on specific aspects of the design. These limitation
+may be removed later.</p>
+<p>See also <a href="/doc/antigoals">anti-goals</a> which are less likely to be
+&ldquo;fixed&rdquo;.</p>
+<p>See also <a href="/doc/roadmap">roadmap</a> for planned features.</p>
+<h3 id="no-sync">No communication between peers yet</h3>
+<p>At this point in time, Bazil is a single-node system. It'll store your
+data, take snapshots of it, and you could use for example <code>rsync</code> to
+backup the object store, but Bazil itself is not yet ready to transfer
+data between computers, or synchronize file changes between two peers.</p>
+<p>The design for peer synchronization exists and is pretty solid, and
+current work focuses on a good RPC mechanism; most existing frameworks
+assume small messages, can't prioritize data transfers, or are
+constrained by to strict client-server request-response messaging that
+is not the best match for two-way synchronization traffic.</p>
+<p>See <a href="/doc/roadmap">roadmap</a> for <a href="/doc/roadmap#sync">sync</a>, remote KV
+access via <a href="/doc/roadmap#sftp">SFTP</a> and <a href="/doc/roadmap#s3">S3</a>,
+<a href="/doc/roadmap#synckv">background synchronization</a>, and so on.</p>
+<h3 id="limits-inmem">Dirty file data is in memory</h3>
+<p>Current implementation does not write file contents to disk until it
+sees <code>fsync</code> or <code>close</code>. That means creating a large file consumes a
+lot of RAM temporarily.</p>
+<h3 id="limits-gc">Garbage collection is not implemented yet</h3>
+<p>Right now, objects added to the CAS remain there permanently. A plan
+for garbage collection exists (though distributed, weakly connected GC
+is tricky!), but implementing it is not yet a priority.</p>
+</div>
+</div>
+	      <div class="col-md-1"></div>
+	      <div class="col-md-2"><h3>Projects</h3>
+
+<p>
+  <a href="/doc">Bazil</a> is a distributed file system designed
+  for single-person disconnected operation. It lets you share your
+  files across all your computers, with or without cloud services.
+</p>
+
+<p>
+  <a href="/fuse">FUSE</a> is a programming library for writing file
+  systems in userspace, in Go.
+</p>
+</div>
+	      <div class="col-md-1"></div>
+      </div>
+    </div>
+<script src="/js/jquery-3.4.1.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+
+<script>
+ (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+ })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ ga('create', 'UA-39802734-1', 'bazil.org');
+ ga('send', 'pageview');
+</script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://bazil.org/</loc>
+    <lastmod>2015-07-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://bazil.org/tags/bazil/</loc>
+    <lastmod>2015-07-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://bazil.org/</loc>
+    <lastmod>2015-07-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://bazil.org/2015/07/07/distributed/</loc>
+    <lastmod>2015-07-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://bazil.org/tags/</loc>
+    <lastmod>2015-07-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://bazil.org/tags/announce/</loc>
+    <lastmod>2014-04-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://bazil.org/2014/04/24/introducing-bazil/</loc>
+    <lastmod>2014-04-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://bazil.org/tags/project/</loc>
+    <lastmod>2014-04-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://bazil.org/tags/fuse/</loc>
+    <lastmod>2013-06-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://bazil.org/2013/06/10/talk-about-fuse/</loc>
+    <lastmod>2013-06-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://bazil.org/tags/talk/</loc>
+    <lastmod>2013-06-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://bazil.org/2013/04/01/not-a-fool/</loc>
+    <lastmod>2013-04-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://bazil.org/talks/2013-06-10-la-gophers/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://bazil.org/doc/antigoals/</loc>
+  </url>
+  
+  <url>
+    <loc>https://bazil.org/doc/architecture/</loc>
+  </url>
+  
+  <url>
+    <loc>https://bazil.org/doc/status/</loc>
+  </url>
+  
+  <url>
+    <loc>https://bazil.org/bazil/</loc>
+  </url>
+  
+  <url>
+    <loc>https://bazil.org/fuse/</loc>
+  </url>
+  
+  <url>
+    <loc>https://bazil.org/doc/install/</loc>
+  </url>
+  
+  <url>
+    <loc>https://bazil.org/doc/</loc>
+  </url>
+  
+  <url>
+    <loc>https://bazil.org/doc/related/</loc>
+  </url>
+  
+  <url>
+    <loc>https://bazil.org/doc/roadmap/</loc>
+  </url>
+  
+  <url>
+    <loc>https://bazil.org/talks/</loc>
+  </url>
+  
+  <url>
+    <loc>https://bazil.org/doc/usage/</loc>
+  </url>
+  
+</urlset>

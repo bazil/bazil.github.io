@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>announce on Bazil</title>
+    <link>https://bazil.org/tags/announce/</link>
+    <description>Recent content in announce on Bazil</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Thu, 24 Apr 2014 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://bazil.org/tags/announce/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Introducing Bazil</title>
+      <link>https://bazil.org/2014/04/24/introducing-bazil/</link>
+      <pubDate>Thu, 24 Apr 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://bazil.org/2014/04/24/introducing-bazil/</guid>
+      <description>GopherCon is here, and it is time to reveal what Bazil is all about.
+Bazil, also known as bazil.org/bazil, is a file system that lets your data reside where it is most convenient for it to reside.
+Bazil is still under heavy development, but welcomes developers and curious power users. Here&#39;s a little teaser of what&#39;s coming.
+Imagine you have
+  A laptop with a a 256GB SSD  A desktop with a 3TB hard disk  A cloud server or storage service (virtual machine with expandable disks, S3, etc) or  just a cheap computer in a closet with two slow 4TB disks or  external USB disk you plug in once a week for backups  On the desktop, you naturally want to be able to use the whole 3TB disk.</description>
+    </item>
+    
+    <item>
+      <title>Hello, World!</title>
+      <link>https://bazil.org/2013/04/01/not-a-fool/</link>
+      <pubDate>Mon, 01 Apr 2013 00:00:00 +0000</pubDate>
+      
+      <guid>https://bazil.org/2013/04/01/not-a-fool/</guid>
+      <description>Hi. This blog post establishes the Bazil.org project. This is not an April Fool&#39;s joke.
+There are more ambituous things floating in the background, but many people have expressed interest in this, so here&#39;s an early release: a Go FUSE filesystem programming library.
+This is based on Russ Cox&amp;lsquo;s fuse library, as hosted at https://code.google.com/p/rsc/source/browse/#hg%2Ffuse
+Here&#39;s how to get going:
+go get bazil.org/fuse  The github repository is at https://github.com/bazil/fuse</description>
+    </item>
+    
+  </channel>
+</rss>

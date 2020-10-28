@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Introduction to Bazil on Bazil</title>
+    <link>https://bazil.org/doc/</link>
+    <description>Recent content in Introduction to Bazil on Bazil</description>
+    <generator>Hugo -- gohugo.io</generator>
+    
+	<atom:link href="https://bazil.org/doc/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Anti-goals</title>
+      <link>https://bazil.org/doc/antigoals/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bazil.org/doc/antigoals/</guid>
+      <description>This document collects things that are explicitly not design goals for Bazil.
+Trying to do these things would probably force us to trade off something we consider more desirable. For example, global locks would prevent weakly connected and offline operation, and thus there is nothing to be done there.
+If you have an idea of how to gain some of these without trading off the unique and desirable aspects of Bazil, please do let us know!</description>
+    </item>
+    
+    <item>
+      <title>Architecture</title>
+      <link>https://bazil.org/doc/architecture/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bazil.org/doc/architecture/</guid>
+      <description>Filesystem Bazil is a userspace file system. This means the files you see when using Bazil do not have to actually exist as files on a local file system. This lets you do things like browse terabytes of archived data on a laptop with a small SSD.
+Your local disk will be used as the default storage location and a cache.
+Content-Addressed Storage Each file stored in Bazil is divided into chunks, hashed in a Merkle tree, and stored into a Content-Addressed Store (CAS).</description>
+    </item>
+    
+    <item>
+      <title>Bazil is still in development</title>
+      <link>https://bazil.org/doc/status/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bazil.org/doc/status/</guid>
+      <description>In early alpha testing.
+The data formats in Bazil are still undergoing major changes, and significant functionality is missing or has not been tested well enough.
+While we don&#39;t expect it to literally lose data, we will not put extra effort into data format compatibility until the first formally released version.
+As it is, Bazil is intended primarily for other developers and power users exploring future options. Do not stare into laser with remaining eye.</description>
+    </item>
+    
+    <item>
+      <title>Installation</title>
+      <link>https://bazil.org/doc/install/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bazil.org/doc/install/</guid>
+      <description>Installing from source Building Bazil generally requires the latest 1.x release of Go.
+If you want to install from source, first install Go, then set up GOPATH and then run
+go get bazil.org/bazil You&#39;ll find an executable in $GOPATH/bin/bazil. That file is all that is needed for Bazil itself to run.
+Dependencies To work right, Bazil needs the FUSE utilities installed, specifically command fusermount from fuse.deb or similar for Linux, and OSXFUSE for Mac.</description>
+    </item>
+    
+    <item>
+      <title>Related work</title>
+      <link>https://bazil.org/doc/related/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bazil.org/doc/related/</guid>
+      <description>Bazil stands on the shoulders of some giants, and was inspired by shoulders of other giants. Or something like that.
+FUSE FUSE is a protocol between the kernel and a userspace process, letting the userspace serve file system requests coming from the kernel.
+The kernelspace implementation has very partial documentation, but the public API and the implementation are the best guides because they are the only thing that matters in the end.</description>
+    </item>
+    
+    <item>
+      <title>Roadmap</title>
+      <link>https://bazil.org/doc/roadmap/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bazil.org/doc/roadmap/</guid>
+      <description>This document serves as a big-picture roadmap of where Bazil is headed. This is all speculative and may change at any time.
+ Near future Synchronize file changes between peers Work in progress, slowed by lacking RPC infrastructure.
+Concurrent multi-backend KV storage Current version is sequential and naive.
+Introduce concept of cancel/interrupt to CAS and KV APIs: cancel &amp;lt;-chan struct{}, tie into fuse.Intr when serving FS request.
+Bandwidth/latency estimation to prioritize backend attempts.</description>
+    </item>
+    
+    <item>
+      <title>Usage</title>
+      <link>https://bazil.org/doc/usage/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bazil.org/doc/usage/</guid>
+      <description>Bazil uses a per-user daemon, and communicates with it over UNIX domain sockets.
+Our examples use two computers, squirrel being a desktop computer and pocketgopher a laptop.
+The daemon is not yet automatically started, so the first step is to start it. This will go away later.
+squirrel$ bazil server run &amp;amp; pocketgopher$ bazil server run &amp;amp; Creating a volume Bazil organizes your files by volume. Let&#39;s create our first volume:</description>
+    </item>
+    
+  </channel>
+</rss>

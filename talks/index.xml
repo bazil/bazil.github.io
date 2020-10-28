@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Talks about Bazil on Bazil</title>
+    <link>https://bazil.org/talks/</link>
+    <description>Recent content in Talks about Bazil on Bazil</description>
+    <generator>Hugo -- gohugo.io</generator>
+    
+	<atom:link href="https://bazil.org/talks/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title></title>
+      <link>https://bazil.org/talks/2013-06-10-la-gophers/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bazil.org/talks/2013-06-10-la-gophers/</guid>
+      <description>Writing a file system in Go    Writing a file system in Go bazil.org/fuse: a pure-Go FUSE library 10 June 2013  Tommi Virtanen      FUSE  File systems in User SpacE fuse.sourceforge.net/   People tend to think it&amp;#39;s a C library  Nope   It&amp;#39;s a Linux kernel API  With a request-response protocol spoken over a fd  Userspace is the server   The C library is the reference implementation  .</description>
+    </item>
+    
+  </channel>
+</rss>
